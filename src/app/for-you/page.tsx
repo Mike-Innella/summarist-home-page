@@ -1,20 +1,57 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import { useAuth } from '../../lib/AuthProvider'
 import { signOut } from '../../lib/supabaseAuth'
+import { getSelectedBook, getRecommendedBooks, getSuggestedBooks } from '../../lib/api'
+import { Book } from '../../types/book'
+import BookCard from '../../components/BookCard'
+import BookFeatureCard from '../../components/BookFeatureCard'
+import SkeletonLoader from '../../components/SkeletonLoader'
 
 export default function ForYouPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null)
+  const [recommendedBooks, setRecommendedBooks] = useState<Book[]>([])
+  const [suggestedBooks, setSuggestedBooks] = useState<Book[]>([])
+  const [loadingBooks, setLoadingBooks] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/')
     }
   }, [user, loading, router])
+
+  useEffect(() => {
+    if (user) {
+      loadBooks()
+    }
+  }, [user])
+
+  const loadBooks = async () => {
+    try {
+      setLoadingBooks(true)
+      setError(null)
+
+      const [selected, recommended, suggested] = await Promise.all([
+        getSelectedBook(),
+        getRecommendedBooks(),
+        getSuggestedBooks()
+      ])
+
+      setSelectedBook(selected)
+      setRecommendedBooks(recommended)
+      setSuggestedBooks(suggested)
+    } catch (err) {
+      console.error('Error loading books:', err)
+      setError('Failed to load books. Please try again later.')
+    } finally {
+      setLoadingBooks(false)
+    }
+  }
 
   const handleLogout = async () => {
     await signOut()
@@ -46,96 +83,56 @@ export default function ForYouPage() {
       </header>
       
       <main className="for-you__main">
-        <div className="for-you__section">
-          <h2 className="for-you__section--title">Selected just for you</h2>
-          <div className="selected-book">
-            <div className="selected-book__content">
-              <Image 
-                src="/assets/landing.png" 
-                alt="Featured Book" 
-                className="selected-book__image"
-                width={120}
-                height={160}
-              />
-              <div className="selected-book__info">
-                <div className="selected-book__subtitle">Book of the day</div>
-                <h3 className="selected-book__title">The One Thing</h3>
-                <div className="selected-book__author">Gary Keller</div>
-                <div className="selected-book__description">
-                  The surprisingly simple truth behind extraordinary results. 
-                  Learn how to focus on what matters most and achieve your goals.
-                </div>
-              </div>
-            </div>
+        {error && (
+          <div className="error-message" style={{ 
+            backgroundColor: '#fee', 
+            color: '#c33', 
+            padding: '16px', 
+            borderRadius: '8px', 
+            marginBottom: '32px',
+            textAlign: 'center'
+          }}>
+            {error}
           </div>
+        )}
+
+        <div className="for-you__section">
+          {loadingBooks ? (
+            <SkeletonLoader variant="selected-book" count={1} />
+          ) : selectedBook ? (
+            <BookFeatureCard book={selectedBook} />
+          ) : (
+            <div className="loading">No selected book available.</div>
+          )}
         </div>
 
         <div className="for-you__section">
           <h2 className="for-you__section--title">Recommended For You</h2>
           <div className="books__grid">
-            <div className="book__card">
-              <div className="book__card--wrapper">
-                <div className="book__image--wrapper">
-                  <Image 
-                    src="/assets/logo.png" 
-                    alt="Book" 
-                    className="book__image"
-                    width={120}
-                    height={160}
-                  />
-                </div>
-                <div className="book__content">
-                  <div className="book__title">Sample Book 1</div>
-                  <div className="book__author">Author Name</div>
-                  <div className="book__subtitle">A great book for learning</div>
-                  <div className="book__details">
-                    <div className="book__duration">5 min read</div>
-                    <div className="book__rating">
-                      <span className="book__rating--number">4.5</span>
-                      <div className="book__stars">
-                        <span className="book__star book__star--filled">★</span>
-                        <span className="book__star book__star--filled">★</span>
-                        <span className="book__star book__star--filled">★</span>
-                        <span className="book__star book__star--filled">★</span>
-                        <span className="book__star">★</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="book__card">
-              <div className="book__card--wrapper">
-                <div className="book__image--wrapper">
-                  <Image 
-                    src="/assets/logo.png" 
-                    alt="Book" 
-                    className="book__image"
-                    width={120}
-                    height={160}
-                  />
-                </div>
-                <div className="book__content">
-                  <div className="book__title">Sample Book 2</div>
-                  <div className="book__author">Author Name</div>
-                  <div className="book__subtitle">Another great book</div>
-                  <div className="book__details">
-                    <div className="book__duration">8 min read</div>
-                    <div className="book__rating">
-                      <span className="book__rating--number">4.2</span>
-                      <div className="book__stars">
-                        <span className="book__star book__star--filled">★</span>
-                        <span className="book__star book__star--filled">★</span>
-                        <span className="book__star book__star--filled">★</span>
-                        <span className="book__star book__star--filled">★</span>
-                        <span className="book__star">★</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {loadingBooks ? (
+              <SkeletonLoader variant="book-card" count={8} />
+            ) : recommendedBooks.length > 0 ? (
+              recommendedBooks.map((book) => (
+                <BookCard key={book.id} book={book} />
+              ))
+            ) : (
+              <div className="loading">No recommended books available.</div>
+            )}
+          </div>
+        </div>
+
+        <div className="for-you__section">
+          <h2 className="for-you__section--title">Suggested Books</h2>
+          <div className="books__grid">
+            {loadingBooks ? (
+              <SkeletonLoader variant="book-card" count={8} />
+            ) : suggestedBooks.length > 0 ? (
+              suggestedBooks.map((book) => (
+                <BookCard key={book.id} book={book} />
+              ))
+            ) : (
+              <div className="loading">No suggested books available.</div>
+            )}
           </div>
         </div>
       </main>

@@ -2,23 +2,28 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "../lib/AuthProvider";
 import AuthModal from "../components/AuthModal";
+import Sidebar from "../components/Sidebar";
+import LayoutWrapper from "../components/LayoutWrapper";
 
 export const metadata: Metadata = {
   title: "Summarist",
-  description: "Summarist Landing Page",
+  description: "Expand your mind in 15 minutes or less",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body>
         <AuthProvider>
-          {children}
+          <Sidebar />
           <AuthModal />
+          <LayoutWrapper>
+            {children}
+          </LayoutWrapper>
         </AuthProvider>
       </body>
     </html>
