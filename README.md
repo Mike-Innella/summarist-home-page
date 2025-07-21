@@ -134,7 +134,17 @@ npm run type-check  # TypeScript checking
 
 ## 🌐 Deployment
 
-### Deploy to Vercel (Recommended)
+### 🔒 Secure Vercel Deployment (Recommended)
+
+This project uses a **secure deployment approach** that eliminates common `@secret` syntax errors while maintaining full security.
+
+**Key Security Features:**
+- ✅ No hardcoded secrets in code
+- ✅ Vercel Dashboard environment variable management
+- ✅ No `@secret` syntax issues
+- ✅ Proper separation of client/server variables
+
+### Quick Deploy Steps:
 
 1. **Push to GitHub**: Ensure your code is in a GitHub repository
 
@@ -143,15 +153,17 @@ npm run type-check  # TypeScript checking
    - Import your GitHub repository
    - Vercel auto-detects Next.js configuration
 
-3. **Environment Variables**:
-   - Add `NEXT_PUBLIC_SUPABASE_URL`
-   - Add `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+3. **Add Environment Variables in Vercel Dashboard**:
+   - `NEXT_PUBLIC_SUPABASE_URL`: `https://cgaiykwjcbtexhzlcrpw.supabase.co`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase anon key
 
 4. **Deploy**: Click "Deploy" and wait for completion
 
-For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
+**⚠️ Important**: This project **does not use** `@secret` syntax in `vercel.json` to avoid deployment conflicts. All environment variables are managed through Vercel's secure Dashboard.
 
-## 🔐 Environment Variables
+📖 **For complete deployment instructions with security details, see [DEPLOYMENT.md](./DEPLOYMENT.md)**
+
+## � Environment Variables
 
 | Variable | Description | Required |
 |----------|-------------|----------|
