@@ -3,9 +3,9 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Book } from '@/types/book'
-import { useAuth } from '@/lib/AuthProvider'
-import { useAuthModal } from '@/store/useAuthModal'
+import { Book } from '../types/book'
+import { useAuth } from '../lib/AuthProvider'
+import { useAuthModal } from '../store/useAuthModal'
 import { AiOutlineBook } from 'react-icons/ai'
 import { BsPlayFill } from 'react-icons/bs'
 
@@ -68,12 +68,15 @@ const BookFeatureCard: React.FC<BookFeatureCardProps> = ({ book }) => {
         <div className="selected-book__image-wrapper">
           <Image 
             src={imageError || !book.imageLink ? "/assets/logo.png" : book.imageLink} 
-            alt={book.title}
+            alt={`${book.title} by ${book.author} - Book cover`}
             className="selected-book__image"
             width={200}
             height={240}
+            quality={95}
             priority
             sizes="(max-width: 768px) 200px, 240px"
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyziw3yOWSvADU7f5P7pwr8+z6aH/Z"
             onError={() => setImageError(true)}
           />
           {book.subscriptionRequired && (

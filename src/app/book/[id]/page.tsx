@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useAuth } from '../../../lib/AuthProvider'
@@ -25,13 +25,7 @@ export default function BookDetailPage() {
 
   const bookId = params.id as string
 
-  useEffect(() => {
-    if (bookId) {
-      loadBook()
-    }
-  }, [bookId])
-
-  const loadBook = async () => {
+  const loadBook = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -43,9 +37,15 @@ export default function BookDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [bookId])
 
-  const handleReadOrListen = (action: 'read' | 'listen') => {
+  useEffect(() => {
+    if (bookId) {
+      loadBook()
+    }
+  }, [bookId, loadBook])
+
+  const handleReadOrListen = () => {
     if (!user) {
       openModal('login')
       return
@@ -174,14 +174,14 @@ export default function BookDetailPage() {
 
             <div className="book-detail__actions">
               <button
-                onClick={() => handleReadOrListen('read')}
+                onClick={handleReadOrListen}
                 className="btn book-detail__action-btn"
               >
                 <BiBookOpen />
                 Read
               </button>
               <button
-                onClick={() => handleReadOrListen('listen')}
+                onClick={handleReadOrListen}
                 className="btn book-detail__action-btn"
               >
                 <BiHeadphone />
@@ -209,7 +209,7 @@ export default function BookDetailPage() {
         </div>
 
         <div className="book-detail__description">
-          <h2>What's it about?</h2>
+            <h2>What&apos;s it about?</h2>
           <div className="book-detail__description-content">
             <h3>Book Description</h3>
             <p>{book.bookDescription}</p>

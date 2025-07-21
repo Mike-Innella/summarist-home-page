@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '../../../lib/AuthProvider'
 import { getBookById } from '../../../lib/api'
@@ -28,6 +28,20 @@ export default function PlayerPage() {
 
   const bookId = params.id as string
 
+  const loadBook = useCallback(async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const bookData = await getBookById(bookId)
+      setBook(bookData)
+    } catch (err) {
+      console.error('Error loading book:', err)
+      setError('Failed to load book. Please try again later.')
+    } finally {
+      setLoading(false)
+    }
+  }, [bookId])
+
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/')
@@ -37,7 +51,7 @@ export default function PlayerPage() {
     if (bookId && user) {
       loadBook()
     }
-  }, [bookId, user, authLoading])
+  }, [bookId, user, authLoading, loadBook, router])
 
   useEffect(() => {
     const audio = audioRef.current
@@ -57,20 +71,6 @@ export default function PlayerPage() {
       audio.removeEventListener('ended', onEnded)
     }
   }, [book])
-
-  const loadBook = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      const bookData = await getBookById(bookId)
-      setBook(bookData)
-    } catch (err) {
-      console.error('Error loading book:', err)
-      setError('Failed to load book. Please try again later.')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const togglePlayPause = () => {
     const audio = audioRef.current

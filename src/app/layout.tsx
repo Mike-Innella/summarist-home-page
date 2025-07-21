@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "../lib/AuthProvider";
-import AuthModal from "../components/AuthModal";
+import ClientAuthModal from "../components/ClientAuthModal";
 import Sidebar from "../components/Sidebar";
 import LayoutWrapper from "../components/LayoutWrapper";
 
@@ -20,7 +20,7 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <Sidebar />
-          <AuthModal />
+          <ClientAuthModal />
           <LayoutWrapper>
             {children}
           </LayoutWrapper>

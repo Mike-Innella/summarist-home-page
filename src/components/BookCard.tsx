@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Book } from '@/types/book'
-import { getAudioDuration, formatDuration } from '@/lib/api'
+import { Book } from '../types/book'
+import { getAudioDuration, formatDuration } from '../lib/api'
 
 interface BookCardProps {
   book: Book
@@ -59,10 +59,15 @@ const BookCard: React.FC<BookCardProps> = ({ book, variant = 'default' }) => {
           <div className="selected-book__image-wrapper">
             <Image 
               src={imageError || !book.imageLink ? "/assets/logo.png" : book.imageLink} 
-              alt={book.title}
+              alt={`${book.title} by ${book.author} - Book cover`}
               className="selected-book__image"
               width={120}
               height={160}
+              quality={90}
+              loading="lazy"
+              sizes="(max-width: 768px) 120px, 160px"
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyziw3yOWSvADU7f5P7pwr8+z6aH/Z"
               onError={() => setImageError(true)}
             />
             {book.subscriptionRequired && (
@@ -97,10 +102,15 @@ const BookCard: React.FC<BookCardProps> = ({ book, variant = 'default' }) => {
         <div className="book__image--wrapper">
           <Image 
             src={imageError || !book.imageLink ? "/assets/logo.png" : book.imageLink} 
-            alt={book.title}
+            alt={`${book.title} by ${book.author} - Book cover`}
             className="book__image"
             width={120}
             height={160}
+            quality={90}
+            loading="lazy"
+            sizes="(max-width: 768px) 120px, 160px"
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyziw3yOWSvADU7f5P7pwr8+z6aH/Z"
             onError={() => setImageError(true)}
           />
           {book.subscriptionRequired && (
