@@ -4,9 +4,15 @@ import Image from "next/image";
 import { AiFillFileText, AiFillBulb, AiFillAudio, AiFillStar } from "react-icons/ai";
 import { BsPeople } from "react-icons/bs";
 import { BiCrown } from "react-icons/bi";
+import { useAuthModal } from "../store/useAuthModal";
+import { useAuth } from "../lib/AuthProvider";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
   const [activeHeadingIndex, setActiveHeadingIndex] = useState(1); // Start with index 1 (second item)
+  const { openModal } = useAuthModal()
+  const { user } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -15,6 +21,14 @@ export default function HomePage() {
 
     return () => clearInterval(interval); // Cleanup interval on component unmount
   }, []);
+
+  const handleLoginClick = () => {
+    if (user) {
+      router.push('/for-you')
+    } else {
+      openModal('login')
+    }
+  }
 
   return (
     <main className="overflow-x-hidden max-w-full font-['Roboto']">
@@ -31,7 +45,7 @@ export default function HomePage() {
             />
           </figure>
           <ul className="nav__list--wrapper">
-            <li className="nav__list nav__list--login">Login</li>
+            <li className="nav__list nav__list--login" onClick={handleLoginClick}>Login</li>
             <li className="nav__list nav__list--mobile">About</li>
             <li className="nav__list nav__list--mobile">Contact</li>
             <li className="nav__list nav__list--mobile">Help</li>
@@ -52,7 +66,7 @@ export default function HomePage() {
                 individuals who barely have time to read, <br />
                 and even people who don&apos;t like to read.
               </p>
-              <button className="btn home__cta--btn">Login</button>
+              <button className="btn home__cta--btn" onClick={handleLoginClick}>Login</button>
             </div>
             <div className="landing__image--mask">
               <Image
@@ -223,7 +237,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="reviews__btn--wrapper">
-              <button className="btn">Login</button>
+              <button className="btn" onClick={handleLoginClick}>Login</button>
             </div>
           </div>
         </div>
